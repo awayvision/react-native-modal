@@ -632,17 +632,16 @@ export class ReactNativeModal extends React.Component<ModalProps, State> {
     if (this.contentRef) {
       this.props.onModalWillShow && this.props.onModalWillShow();
       const interactionHandle = InteractionManager.createInteractionHandle();
-      this.contentRef
-        .animate(this.animationIn, this.props.animationInTiming)
-        .then(() => {
-          this.isTransitioning = false;
-          InteractionManager.clearInteractionHandle(interactionHandle);
-          if (!this.props.isVisible) {
-            this.close();
-          } else {
-            this.props.onModalShow();
-          }
-        });
+      this.contentRef.animate(this.animationIn, this.props.animationInTiming);
+      setTimeout(() => {
+        this.isTransitioning = false;
+        InteractionManager.clearInteractionHandle(interactionHandle);
+        if (!this.props.isVisible) {
+          this.close();
+        } else {
+          this.props.onModalShow();
+        }
+      }, this.props.animationInTiming);
     }
   };
 
@@ -676,31 +675,31 @@ export class ReactNativeModal extends React.Component<ModalProps, State> {
     if (this.contentRef) {
       this.props.onModalWillHide && this.props.onModalWillHide();
       const interactionHandle = InteractionManager.createInteractionHandle();
-      this.contentRef
-        .animate(animationOut, this.props.animationOutTiming)
-        .then(() => {
-          this.isTransitioning = false;
-          InteractionManager.clearInteractionHandle(interactionHandle);
-          if (this.props.isVisible) {
-            this.open();
-          } else {
-            this.setState(
-              {
-                showContent: false,
-              },
-              () => {
-                this.setState(
-                  {
-                    isVisible: false,
-                  },
-                  () => {
-                    this.props.onModalHide();
-                  },
-                );
-              },
-            );
-          }
-        });
+      this.contentRef.animate(animationOut, this.props.animationOutTiming);
+
+      setTimeout(() => {
+        this.isTransitioning = false;
+        InteractionManager.clearInteractionHandle(interactionHandle);
+        if (this.props.isVisible) {
+          this.open();
+        } else {
+          this.setState(
+            {
+              showContent: false,
+            },
+            () => {
+              this.setState(
+                {
+                  isVisible: false,
+                },
+                () => {
+                  this.props.onModalHide();
+                },
+              );
+            },
+          );
+        }
+      }, this.props.animationOutTiming);
     }
   };
   makeBackdrop = () => {
